@@ -1,4 +1,4 @@
-# Install script for directory: /mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/main_project/kv-store-system
+# Install script for directory: /mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/main_project/kv-store-system/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
