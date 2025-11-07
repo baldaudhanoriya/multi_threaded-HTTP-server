@@ -1,0 +1,1 @@
+/usr/bin/c++  -Wall CMakeFiles/kv-server.dir/main.cpp.o -o kv-server  -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lzstd -lssl -lcrypto -lresolv -lm 
