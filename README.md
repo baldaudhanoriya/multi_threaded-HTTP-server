@@ -517,5 +517,3 @@ You now have everything needed for Part B:
 - ✅ Demo preparation guide
 
 **Next step**: Run your experiments and write the report!
-
-Good luck with your demo! 🚀
