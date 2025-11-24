@@ -292,6 +292,11 @@ public:
         // generic error / not-found handler - return helpful JSON for bad endpoints
         srv.set_error_handler([](const httplib::Request &req, httplib::Response &res)
                               {
+            // Don't override if handler already set content
+            if (!res.body.empty()) {
+                return;
+            }
+            
             cout << "\n[REQUEST] " << req.method << " " << req.path << " from " << req.remote_addr << endl;
             int status = res.status ? res.status : 404;
             res.status = status;

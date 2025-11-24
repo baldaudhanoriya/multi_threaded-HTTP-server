@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/include/mysql -I"/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final/include"
+CXX_INCLUDES = -I/usr/include/mysql -I"/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/phase 2 final/multi_threaded-HTTP-server/include"
 
 CXX_FLAGS =  -Wall
 

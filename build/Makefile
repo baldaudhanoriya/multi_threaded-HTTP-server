@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final"
+CMAKE_SOURCE_DIR = "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/phase 2 final/multi_threaded-HTTP-server"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final/build"
+CMAKE_BINARY_DIR = "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/phase 2 final/multi_threaded-HTTP-server/build"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final/build/CMakeFiles" "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final/build//CMakeFiles/progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/phase 2 final/multi_threaded-HTTP-server/build/CMakeFiles" "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/phase 2 final/multi_threaded-HTTP-server/build//CMakeFiles/progress.marks"
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final/build/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/phase 2 final/multi_threaded-HTTP-server/build/CMakeFiles" 0
 .PHONY : all
 
 # The main clean target

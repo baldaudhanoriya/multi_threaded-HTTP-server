@@ -1,0 +1,80 @@
+========================================
+  KV Store Load Generator
+========================================
+Server:    127.0.0.1:8080
+Threads:   20
+Duration:  60 seconds
+Workload:  mixed
+Timeout:   5000 ms
+========================================
+
+Starting 20 client threads...
+[Thread 0] Started
+[Thread 1] Started
+[Thread 2] Started
+[Thread 3] Started
+[Thread 4] Started
+[Thread 5] Started
+[Thread 6] Started
+[Thread 7] Started
+[Thread 8] Started
+[Thread 9] Started
+[Thread 10] Started
+[Thread 11] Started
+[Thread 12] Started
+[Thread 13] Started
+[Thread 14] Started
+[Thread 15] Started
+[Thread 16] Started
+Load test running for 60 seconds...
+Press Ctrl+C to stop early
+
+[Thread 17] Started
+[Thread 18] Started
+[Thread 19] Started
+[10s] Success: 40 | Failed: 11 | Throughput: 4.00 req/s
+[20s] Success: 113 | Failed: 32 | Throughput: 5.65 req/s
+[30s] Success: 204 | Failed: 51 | Throughput: 6.80 req/s
+[40s] Success: 314 | Failed: 75 | Throughput: 7.85 req/s
+[50s] Success: 408 | Failed: 96 | Throughput: 8.16 req/s
+[60s] Success: 455 | Failed: 117 | Throughput: 7.58 req/s
+
+Stopping threads...
+[Thread 7] Stopped
+[Thread 4] Stopped
+[Thread 1] Stopped
+[Thread 5] Stopped
+[Thread 2] Stopped
+[Thread 6] Stopped
+[Thread 8] Stopped
+[Thread 19] Stopped
+[Thread 17] Stopped
+[Thread 10] Stopped
+[Thread 15] Stopped
+[Thread 13] Stopped
+[Thread 9] Stopped
+[Thread 14] Stopped
+[Thread 0] Stopped
+[Thread 16] Stopped
+[Thread 12] Stopped
+[Thread [Thread 318] Stopped
+] Stopped
+[Thread 11] Stopped
+
+========================================
+  Load Test Results
+========================================
+Actual Duration:       61.33 seconds
+Total Requests:        592
+Successful Requests:   464
+Failed Requests:       128
+Success Rate:          78.38%
+
+Average Throughput:    7.57 req/s
+Average Response Time: 1231.92 ms
+
+Response Time Percentiles:
+  P50 (median):        102.04 ms
+  P95:                 4916.55 ms
+  P99:                 5003.58 ms
+========================================

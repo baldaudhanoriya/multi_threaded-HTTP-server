@@ -1,0 +1,60 @@
+========================================
+  KV Store Load Generator
+========================================
+Server:    127.0.0.1:8080
+Threads:   10
+Duration:  60 seconds
+Workload:  mixed
+Timeout:   5000 ms
+========================================
+
+Starting 10 client threads...
+[Thread 0] Started
+[Thread 1] Started
+[Thread 3] Started
+[Thread 6] Started
+[Thread 4] Started
+[Thread 2] Started
+[Thread 5] Started
+[Thread 7] Started
+Load test running for 60 seconds...
+Press Ctrl+C to stop early
+
+[Thread 8] Started
+[Thread 9] Started
+[10s] Success: 44 | Failed: 9 | Throughput: 4.40 req/s
+[20s] Success: 98 | Failed: 25 | Throughput: 4.90 req/s
+[30s] Success: 163 | Failed: 42 | Throughput: 5.43 req/s
+[40s] Success: 246 | Failed: 58 | Throughput: 6.15 req/s
+[50s] Success: 309 | Failed: 75 | Throughput: 6.18 req/s
+[60s] Success: 364 | Failed: 92 | Throughput: 6.07 req/s
+
+Stopping threads...
+[Thread 3] Stopped
+[Thread 0] Stopped
+[Thread 4] Stopped
+[Thread 8] Stopped
+[Thread 1] Stopped
+[Thread 5] Stopped
+[Thread 2] Stopped
+[Thread 6] Stopped
+[Thread 9] Stopped
+[Thread 7] Stopped
+
+========================================
+  Load Test Results
+========================================
+Actual Duration:       60.68 seconds
+Total Requests:        466
+Successful Requests:   366
+Failed Requests:       100
+Success Rate:          78.54%
+
+Average Throughput:    6.03 req/s
+Average Response Time: 275.02 ms
+
+Response Time Percentiles:
+  P50 (median):        2.80 ms
+  P95:                 4441.31 ms
+  P99:                 4918.35 ms
+========================================

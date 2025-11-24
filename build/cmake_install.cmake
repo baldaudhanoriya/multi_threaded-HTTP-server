@@ -1,4 +1,4 @@
-# Install script for directory: /mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final
+# Install script for directory: /mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/phase 2 final/multi_threaded-HTTP-server
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/final/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/mnt/c/Users/balda/OneDrive/Documents/IITB/sem 3/cs 744/project/phase 2 final/multi_threaded-HTTP-server/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
