@@ -1,0 +1,254 @@
+\documentclass{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+
+% Title and author information
+\title{Multi-Threaded HTTP Server\\Performance Analysis}
+\subtitle{Load Testing and Bottleneck Identification}
+\author{Baldau Dhanoriya (24M0839)}
+\institute{IIT Bombay\\CS 744: Design and Engineering of Computing Systems}
+\date{November 24, 2024}
+
+\begin{document}
+
+% Title Slide
+\frame{\titlepage}
+
+% Slide 1: System Architecture
+\begin{frame}{System Architecture}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{architecture.png}
+
+\column{0.5\textwidth}
+\textbf{Multi-Tier Architecture:}
+\begin{itemize}
+    \item HTTP Server (C++, httplib)
+    \item LRU Cache (1000 entries)
+    \item MySQL Database
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Two Performance Paths:}
+\begin{enumerate}
+    \item \textcolor{blue}{KV Operations (get\_all)}\\
+    \small{Bottleneck: Connection overhead}
+    \item \textcolor{red}{Compute Operations (compute\_prime)}\\
+    \small{Bottleneck: CPU saturation (71\%)}
+\end{enumerate}
+\end{columns}
+\end{frame}
+
+% Slide 2: Development Process
+\begin{frame}{Development Process}
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Code Statistics:}
+\begin{itemize}
+    \item \textbf{Load Generator:} 800+ lines (C++)
+    \item \textbf{Server:} 400+ lines (C++)
+    \item \textbf{Monitoring Scripts:} 500+ lines (Bash/Python)
+    \item \textbf{Analysis Tools:} 300+ lines (Python)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{GitHub Repository:}\\
+\small{\texttt{github.com/baldaudhanoriya/multi\_threaded-HTTP-server}}
+
+\column{0.5\textwidth}
+\textbf{Third-Party Software:}
+\begin{itemize}
+    \item \textbf{httplib:} C++ HTTP library
+    \item \textbf{MySQL 8.0:} Database backend
+    \item \textbf{matplotlib:} Plotting/visualization
+    \item \textbf{CMake:} Build system
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Key Features:}
+\begin{itemize}
+    \item Socket-based HTTP client
+    \item Real-time metrics collection
+    \item Resource monitoring integration
+\end{itemize}
+\end{columns}
+\end{frame}
+
+% Slide 3: Load Generator Design
+\begin{frame}{Load Generator Design}
+\begin{columns}
+\column{0.45\textwidth}
+\centering
+\includegraphics[width=\textwidth]{load generator.png}
+
+\column{0.55\textwidth}
+\textbf{Closed-Loop Architecture:}
+\begin{itemize}
+    \item Continuous request generation
+    \item Zero think time (max load)
+    \item Multi-threaded (1-40 threads)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Stress Test Capability:}
+\begin{itemize}
+    \item Peak: 4,170 req/s (compute\_prime)
+    \item 5-second timeout per request
+    \item Microsecond-precision timing
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{7 Workload Types:}
+\begin{itemize}
+    \item KV operations (get/put/mixed)
+    \item Compute operations (prime/hash)
+    \item Cache-focused (get\_popular)
+\end{itemize}
+\end{columns}
+\end{frame}
+
+% Slide 4: Load Test Setup
+\begin{frame}{Load Test Setup}
+\textbf{Test Environment:}
+\begin{itemize}
+    \item \textbf{System:} 16-core CPU, 16 GB RAM, Ubuntu 22.04 (WSL2)
+    \item \textbf{Network:} Localhost (127.0.0.1:8080)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{CPU Pinning (Isolation):}
+\begin{itemize}
+    \item MySQL: Cores 0-2 (3 cores)
+    \item HTTP Server: Cores 3-9 (7 cores)
+    \item Load Generator: Cores 12-15 (4 cores)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Experiment Parameters:}
+\begin{itemize}
+    \item \textbf{Load Levels:} 1, 5, 10, 20, 40 threads
+    \item \textbf{Duration:} 60 seconds per experiment
+    \item \textbf{Workloads:} 5 completed (get\_all, put\_all, get\_popular, mixed, compute\_prime)
+    \item \textbf{Metrics:} Throughput (req/s), Latency (ms), CPU (\%), Memory, Disk I/O
+\end{itemize}
+\end{frame}
+    \item 10 threads (moderate load)
+    \item 20 threads (heavy load)
+    \item 40 threads (saturation load)
+\end{itemize}
+
+Each test ran for 300 seconds to ensure stable measurements, with 10-second cooldown periods between tests.
+
+\subsection{Resource Monitoring}
+
+Concurrent with load testing, we monitored system resources at 1-second intervals:
+
+\begin{itemize}
+    \item \textbf{CPU Utilization}: Per-process (server, MySQL) and system-wide
+    \item \textbf{Memory Usage}: RSS memory in MB
+    \item \textbf{Thread Count}: Active threads per process
+    \item \textbf{Disk I/O}: Read/write throughput (KB/s)
+\end{itemize}
+
+\section{Results and Analysis}
+
+\subsection{Individual Workload Performance}
+
+\subsubsection{Disk-Bound Workload: get\_all}
+
+The \texttt{get\_all} workload issues random key reads, causing frequent cache misses and database queries.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{get_all.png}
+
+\caption{get\_all Workload Performance (Disk-Bound)}
+\label{fig:getall}
+\end{figure}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Throughput: 3,528 req/s at maximum load (40 threads)
+    \item Primary bottleneck: Network/Connection overhead (CPU only 42\%)
+    \item CPU utilization remains moderate (28-42\%), indicating non-CPU bottleneck
+    \item Response time increases from 0.00ms (1 thread) to 10.72ms (40 threads)
+    \item P99 latency reaches 18.85ms at maximum load
+    \item 100\% success rate maintained across all load levels
+\end{itemize}
+
+\subsubsection{Disk-Bound Workload: put\_all}
+
+The \texttt{put\_all} workload performs write-heavy operations with 90\% creates and 10\% deletes.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{put_all.png}
+
+\caption{put\_all Workload Performance (Disk-Bound)}
+\label{fig:putall}
+\end{figure}
+
+\textbf{Key Observations:}
+\begin{itemize}
+% Slide 5: Workload #1 - get_all (Connection Bottleneck)
+\begin{frame}{Workload \#1: get\_all (KV Read Operations)}
+\begin{columns}
+\column{0.45\textwidth}
+\centering
+\includegraphics[width=\textwidth]{all.png}
+
+\column{0.55\textwidth}
+\textbf{Results at 40 threads:}
+\begin{itemize}
+    \item Throughput: 3,528 req/s
+    \item Response Time: 10.72ms avg
+    \item CPU: 41.6\% (moderate)
+    \item Disk I/O: 0 KB/s
+    \item Success Rate: 100\%
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{\textcolor{red}{Bottleneck: Connection Overhead}}
+\begin{itemize}
+    \item Moderate CPU, zero disk I/O
+    \item Connection setup/teardown dominates
+    \item Not disk-bound as initially expected
+\end{itemize}
+\end{columns}
+\end{frame}
+
+% Slide 6: Workload #2 - compute_prime (CPU Bottleneck)
+\begin{frame}{Workload \#2: compute\_prime (CPU-Bound)}
+\begin{columns}
+\column{0.45\textwidth}
+\centering
+\includegraphics[width=\textwidth]{prime.png}
+
+\column{0.55\textwidth}
+\textbf{Results at 40 threads:}
+\begin{itemize}
+    \item Throughput: 4,170 req/s (highest)
+    \item Response Time: 8.95ms avg
+    \item CPU: 70.8\% (near saturation)
+    \item Disk I/O: 0 KB/s
+    \item Success Rate: 100\%
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{\textcolor{red}{Bottleneck: CPU Saturation}}
+\begin{itemize}
+    \item 71\% CPU utilization
+    \item Peak at 5 threads (4,466 req/s)
+    \item Pure compute workload
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\end{document}
