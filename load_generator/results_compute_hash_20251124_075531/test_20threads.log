@@ -1,0 +1,80 @@
+========================================
+  KV Store Load Generator
+========================================
+Server:    127.0.0.1:8080
+Threads:   20
+Duration:  60 seconds
+Workload:  compute_hash
+Timeout:   5000 ms
+========================================
+
+Starting 20 client threads...
+[Thread 0] Started
+[Thread 1] Started
+[Thread 2] Started
+[Thread 4] Started
+[Thread 5] Started
+[Thread 3] Started
+[Thread 8] Started
+[Thread 6] Started
+[Thread 10] Started
+[Thread 7] Started
+[Thread 9] Started
+[Thread 11] Started
+Load test running for 60 seconds...
+Press Ctrl+C to stop early
+
+[Thread 14] Started
+[Thread 12] Started
+[Thread 13] Started
+[Thread 18] Started
+[Thread 17] Started
+[Thread 15] Started
+[Thread 16] Started
+[Thread 19] Started
+[10s] Success: 22557 | Failed: 0 | Throughput: 2255.70 req/s
+[20s] Success: 45171 | Failed: 0 | Throughput: 2258.55 req/s
+[30s] Success: 68296 | Failed: 0 | Throughput: 2276.53 req/s
+[40s] Success: 90996 | Failed: 0 | Throughput: 2274.90 req/s
+[50s] Success: 113716 | Failed: 0 | Throughput: 2274.32 req/s
+[60s] Success: 136508 | Failed: 0 | Throughput: 2275.13 req/s
+
+Stopping threads...
+[Thread 2] Stopped
+[Thread 16] Stopped
+[Thread 0] Stopped
+[Thread 1] Stopped
+[Thread 13] Stopped
+[Thread 18] Stopped
+[Thread 12] Stopped
+[Thread 9] Stopped
+[Thread 10] Stopped
+[Thread 17] Stopped
+[Thread 8] Stopped
+[Thread 14] Stopped
+[Thread 7] Stopped
+[Thread 19] Stopped
+[Thread 11] Stopped
+[Thread 4] Stopped
+[Thread 15] Stopped
+[Thread 5] Stopped
+[Thread 6] Stopped
+[Thread 3] Stopped
+
+========================================
+  Load Test Results
+========================================
+Actual Duration:       60.45 seconds
+Total Requests:        136528
+Successful Requests:   136528
+Failed Requests:       0
+Success Rate:          100.00%
+
+Average Throughput:    2258.34 req/s
+Average Response Time: 8.32 ms
+
+Response Time Percentiles:
+  P50 (median):        7.49 ms
+  P95:                 14.88 ms
+  P99:                 18.90 ms
+========================================

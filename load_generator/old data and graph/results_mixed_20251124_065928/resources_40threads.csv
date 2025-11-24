@@ -1,0 +1,5 @@
+timestamp,server_cpu,server_mem_mb,server_threads,mysql_cpu,mysql_mem_mb,mysql_threads,system_cpu_user,system_cpu_system,system_cpu_idle,disk_read_kb,disk_write_kb
+1763947857,36.1,0,9,0.7,377.73,37,0.38,0.00,99.44,0.00,0
+1763947861,36.1,0,9,0.7,377.73,37,14.62,0.00,78.33,0.00,0
+1763947864,36.4,0,9,0.7,377.73,37,15.17,0.00,78.45,0.00,0
+1763947867,36.7,0,9,0.7,377.73,37,14.68,0.00,78.82,0.00,0

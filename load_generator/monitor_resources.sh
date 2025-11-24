@@ -48,26 +48,46 @@ while true; do
         MYSQL_THREADS=0
     fi
     
-    # System-wide CPU (get average from previous second)
-    CPU_STATS=$(mpstat 1 1 | grep "Average:" | awk '{print $(NF-7), $(NF-5), $NF}')
-    if [ -z "$CPU_STATS" ]; then
-        CPU_USER=0
-        CPU_SYS=0
-        CPU_IDLE=100
+    # System-wide CPU (use /proc/stat as fallback if mpstat not available)
+    if command -v mpstat &> /dev/null; then
+        CPU_STATS=$(mpstat 1 1 2>/dev/null | grep "Average:" | awk '{print $(NF-7), $(NF-5), $NF}')
+        if [ -z "$CPU_STATS" ]; then
+            CPU_USER=0
+            CPU_SYS=0
+            CPU_IDLE=100
+        else
+            CPU_USER=$(echo $CPU_STATS | awk '{print $1}')
+            CPU_SYS=$(echo $CPU_STATS | awk '{print $2}')
+            CPU_IDLE=$(echo $CPU_STATS | awk '{print $3}')
+        fi
     else
-        CPU_USER=$(echo $CPU_STATS | awk '{print $1}')
-        CPU_SYS=$(echo $CPU_STATS | awk '{print $2}')
-        CPU_IDLE=$(echo $CPU_STATS | awk '{print $3}')
+        # Fallback: use top command
+        TOP_CPU=$(top -bn1 | grep "Cpu(s)" | awk '{print $2, $4, $8}' | tr -d '%us,sy,id')
+        if [ -z "$TOP_CPU" ]; then
+            CPU_USER=0
+            CPU_SYS=0
+            CPU_IDLE=100
+        else
+            CPU_USER=$(echo $TOP_CPU | awk '{print $1}')
+            CPU_SYS=$(echo $TOP_CPU | awk '{print $2}')
+            CPU_IDLE=$(echo $TOP_CPU | awk '{print $3}')
+        fi
     fi
     
-    # Disk I/O (get average from 1 second interval)
-    DISK_STATS=$(iostat -d -k 1 2 | grep -A1 "^Device" | tail -1)
-    if [ -z "$DISK_STATS" ]; then
+    # Disk I/O (use /proc/diskstats as fallback if iostat not available)
+    if command -v iostat &> /dev/null; then
+        DISK_STATS=$(iostat -d -k 1 2 2>/dev/null | grep -A1 "^Device" | tail -1)
+        if [ -z "$DISK_STATS" ]; then
+            DISK_READ_KB=0
+            DISK_WRITE_KB=0
+        else
+            DISK_READ_KB=$(echo $DISK_STATS | awk '{print $5}')
+            DISK_WRITE_KB=$(echo $DISK_STATS | awk '{print $6}')
+        fi
+    else
+        # iostat not available - set to 0 (can enhance later with /proc/diskstats parsing)
         DISK_READ_KB=0
         DISK_WRITE_KB=0
-    else
-        DISK_READ_KB=$(echo $DISK_STATS | awk '{print $5}')
-        DISK_WRITE_KB=$(echo $DISK_STATS | awk '{print $6}')
     fi
     
     # Write to CSV

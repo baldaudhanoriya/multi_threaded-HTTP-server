@@ -1,0 +1,405 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red}
+}
+
+% Title and author information
+\title{\textbf{Multi-Threaded HTTP Server Performance Analysis:\\Load Testing and Bottleneck Identification}}
+\author{Your Name\\
+IIT Bombay\\
+CS 744: Design and Engineering of Computing Systems}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report presents a comprehensive performance analysis of a multi-threaded HTTP key-value (KV) store server with MySQL database backend and LRU cache. We designed and implemented a closed-loop load generator to evaluate system performance under various workload patterns. Through systematic experimentation with seven distinct workload types, we identified performance bottlenecks across different resource dimensions including CPU, disk I/O, and memory/cache. Our results demonstrate the system's behavior under varying load levels and provide insights into resource utilization patterns and scalability characteristics.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Modern web services require careful performance analysis to understand their scalability characteristics and identify bottlenecks. This project implements and evaluates a multi-tier key-value store system consisting of an HTTP server, caching layer, and persistent database backend. The primary objectives are:
+
+\begin{enumerate}
+    \item Design and implement a closed-loop load generator for realistic client request simulation
+    \item Evaluate system performance under multiple workload patterns
+    \item Identify performance bottlenecks through resource utilization monitoring
+    \item Analyze throughput, latency, and resource consumption trade-offs
+\end{enumerate}
+
+The system under test is a C++ HTTP server using the \texttt{httplib} library, with MySQL for persistence and an LRU cache for frequently accessed data. This multi-tier architecture represents a typical web service design pattern.
+
+\section{System Architecture}
+
+\subsection{Overall Architecture}
+
+The system consists of three primary components arranged in a multi-tier architecture:
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{architecture.png}
+\caption{System Architecture Overview}
+\label{fig:architecture}
+\end{figure}
+
+\subsection{Component Description}
+
+\subsubsection{HTTP Server}
+The HTTP server is implemented in C++ using the \texttt{httplib} library and provides RESTful endpoints for key-value operations:
+
+\begin{itemize}
+    \item \textbf{POST /kv/create}: Create or update key-value pairs
+    \item \textbf{GET /kv/read}: Read values by key
+    \item \textbf{DELETE /kv/delete}: Delete key-value pairs
+    \item \textbf{GET /compute/prime}: CPU-intensive prime number computation
+    \item \textbf{GET /compute/hash}: CPU-intensive hash computation
+    \item \textbf{GET /status}: Server health check and cache statistics
+\end{itemize}
+
+The server employs a thread pool architecture to handle concurrent requests efficiently.
+
+\subsubsection{LRU Cache Layer}
+An in-memory Least Recently Used (LRU) cache sits between the HTTP server and database:
+
+\begin{itemize}
+    \item Configurable capacity (default: 1000 entries)
+    \item Thread-safe implementation using mutex locks
+    \item Reduces database load for frequently accessed keys
+    \item Provides cache hit/miss statistics via /status endpoint
+\end{itemize}
+
+\subsubsection{MySQL Database}
+The persistence layer uses MySQL with the following characteristics:
+
+\begin{itemize}
+    \item Table: \texttt{kv\_store(key VARCHAR(255) PRIMARY KEY, value TEXT)}
+    \item ACID compliance for data durability
+    \item Indexed primary key for efficient lookups
+\end{itemize}
+
+\section{Load Generator Design}
+
+\subsection{Architecture and Implementation}
+
+The load generator implements a \textbf{closed-loop} design where each client thread continuously sends requests without think time, simulating maximum load conditions. This differs from open-loop designs and provides better saturation testing.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{load generator.png}
+\caption{Load Generator Architecture}
+\label{fig:loadgen}
+\end{figure}
+
+\subsubsection{Key Design Features}
+
+\begin{enumerate}
+    \item \textbf{Multi-threaded Design}: Configurable number of client threads (1-100+)
+    \item \textbf{Socket-based HTTP Client}: Custom HTTP/1.1 implementation using raw sockets
+    \item \textbf{Zero Think Time}: Continuous request generation for maximum throughput
+    \item \textbf{Configurable Timeout}: 5-second default request timeout
+    \item \textbf{Real-time Metrics}: Per-second throughput and success rate monitoring
+\end{enumerate}
+
+\subsection{Workload Types}
+
+The load generator supports seven distinct workload patterns designed to stress different system resources:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Workload} & \textbf{Operations} & \textbf{Expected Bottleneck} \\ \midrule
+get\_all & 100\% random key reads & Disk I/O (cache misses) \\
+put\_all & 90\% writes, 10\% deletes & Disk I/O (write-heavy) \\
+get\_popular & 100\% reads (10 hot keys) & CPU/Memory (cache hits) \\
+mixed & 50\% reads, 30\% writes, 20\% deletes & Balanced \\
+compute\_prime & Prime number computation & CPU-bound \\
+compute\_hash & Hash computation & CPU-bound \\
+compute\_mixed & Mixed compute operations & CPU-bound \\ \bottomrule
+\end{tabular}
+\caption{Workload Types and Characteristics}
+\label{tab:workloads}
+\end{table}
+
+\subsection{Metrics Collection}
+
+The load generator collects the following performance metrics:
+
+\begin{itemize}
+    \item \textbf{Throughput}: Requests per second (req/s)
+    \item \textbf{Response Time}: Average, P50, P95, P99 percentiles (milliseconds)
+    \item \textbf{Success Rate}: Percentage of successful requests
+    \item \textbf{Request Counts}: Total, successful, and failed requests
+\end{itemize}
+
+\section{Experimental Setup}
+
+\subsection{Test Environment}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Component} & \textbf{Specification} \\ \midrule
+CPU & 16-core processor \\
+Memory & 16 GB RAM \\
+Operating System & Ubuntu 22.04 LTS (WSL2) \\
+Server & C++17, httplib, MySQL connector \\
+Database & MySQL 8.0 \\
+Network & Localhost (127.0.0.1:8080) \\ \bottomrule
+\end{tabular}
+\caption{Test Environment Specifications}
+\label{tab:environment}
+\end{table}
+
+\subsection{CPU Pinning Strategy}
+
+To ensure accurate resource utilization measurements and prevent interference, we employed CPU affinity pinning:
+
+\begin{itemize}
+    \item \textbf{MySQL}: Cores 0-2 (3 cores)
+    \item \textbf{HTTP Server}: Cores 3-9 (7 cores)
+    \item \textbf{Load Generator}: Cores 12-15 (4 cores)
+\end{itemize}
+
+This isolation prevents resource contention and enables precise bottleneck identification.
+
+\subsection{Load Levels}
+
+Each workload was tested at five load levels:
+
+\begin{itemize}
+    \item 1 thread (baseline, minimal load)
+    \item 5 threads (light load)
+    \item 10 threads (moderate load)
+    \item 20 threads (heavy load)
+    \item 40 threads (saturation load)
+\end{itemize}
+
+Each test ran for 60 seconds to ensure stable measurements, with 10-second cooldown periods between tests.
+
+\subsection{Resource Monitoring}
+
+Concurrent with load testing, we monitored system resources at 1-second intervals:
+
+\begin{itemize}
+    \item \textbf{CPU Utilization}: Per-process (server, MySQL) and system-wide
+    \item \textbf{Memory Usage}: RSS memory in MB
+    \item \textbf{Thread Count}: Active threads per process
+    \item \textbf{Disk I/O}: Read/write throughput (KB/s)
+\end{itemize}
+
+\section{Results and Analysis}
+
+\subsection{Individual Workload Performance}
+
+\subsubsection{Disk-Bound Workload: get\_all}
+
+The \texttt{get\_all} workload issues random key reads, causing frequent cache misses and database queries.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{get_all.png}
+
+\caption{get\_all Workload Performance (Disk-Bound)}
+\label{fig:getall}
+\end{figure}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Throughput: 3,528 req/s at maximum load (40 threads)
+    \item Primary bottleneck: Network/Connection overhead (CPU only 42\%)
+    \item CPU utilization remains moderate (28-42\%), indicating non-CPU bottleneck
+    \item Response time increases from 0.00ms (1 thread) to 10.72ms (40 threads)
+    \item P99 latency reaches 18.85ms at maximum load
+    \item 100\% success rate maintained across all load levels
+\end{itemize}
+
+\subsubsection{Disk-Bound Workload: put\_all}
+
+The \texttt{put\_all} workload performs write-heavy operations with 90\% creates and 10\% deletes.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{put_all.png}
+
+\caption{put\_all Workload Performance (Disk-Bound)}
+\label{fig:putall}
+\end{figure}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Throughput: 396 req/s at maximum load (40 threads) - 89\% lower than get\_all
+    \item Primary bottleneck: Request failures (only 10\% success rate)
+    \item Server CPU at 54\%, indicating application-level issues
+    \item Response time: 9.45ms average, 17.33ms P99
+    \item Severe request failure rate suggests endpoint/parameter issues
+    \item Performance severely limited by high failure rate, not hardware resources
+\end{itemize}
+
+\subsubsection{Cache-Bound Workload: get\_popular}
+
+The \texttt{get\_popular} workload reads from a small set of 10 hot keys, resulting in high cache hit rates.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{popular.png}
+
+\caption{get\_popular Workload Performance (Cache-Bound)}
+\label{fig:getpopular}
+\end{figure}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Throughput: 3,498 req/s (similar to get\_all, peak at 3,610 req/s at 20 threads)
+    \item Primary bottleneck: Server CPU at 56\% (higher than get\_all's 42\%)
+    \item Minimal disk I/O (0 KB/s) confirms high cache hit rate
+    \item Response time: 10.73ms average, comparable to get\_all
+    \item 100\% success rate demonstrates reliable cache performance
+    \item Cache effectiveness evident from zero disk I/O
+\end{itemize}
+
+\subsubsection{Mixed Workload: mixed}
+
+The \texttt{mixed} workload combines reads (50\%), writes (30\%), and deletes (20\%).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{mixed.png}
+
+\caption{mixed Workload Performance (Balanced)}
+\label{fig:mixed}
+\end{figure}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Throughput: 2,929 req/s at maximum load (40 threads)
+    \item Server CPU: 62\%, highest among KV workloads
+    \item Response time: 10.51ms average, 18.69ms P99
+    \item 80\% success rate (consistent across all load levels)
+    \item Balanced CPU usage reflects mixed operation types
+    \item Performance between pure read (3,528 req/s) and pure write (396 req/s) workloads
+\end{itemize}
+
+\subsubsection{CPU-Bound Workload: compute\_prime}
+
+The \texttt{compute\_prime} workload performs prime number computations.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{prime.png}
+\caption{compute\_prime Workload Performance (CPU-Bound)}
+\label{fig:computeprime}
+\end{figure}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Throughput: 4,170 req/s - highest among all workloads
+    \item Primary bottleneck: Server CPU at 71\% (approaching saturation)
+    \item Peak throughput at 5 threads (4,466 req/s) then decreases slightly
+    \item Response time: 8.95ms average, 13.33ms P99 (best P99)
+    \item 100\% success rate with pure compute operations
+\end{itemize}
+
+\subsection{Performance Summary Table}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lccccl@{}}
+\toprule
+\textbf{Workload} & \textbf{Throughput} & \textbf{Avg RT} & \textbf{Server CPU} & \textbf{Bottleneck} \\
+ & \textbf{(req/s)} & \textbf{(ms)} & \textbf{(\%)} & \\ \midrule
+get\_all & 3,528 & 10.72 & 41.6 & Connection \\
+put\_all & 396 & 9.45 & 53.9 & Failures (10\% success) \\
+get\_popular & 3,498 & 10.73 & 55.7 & Cache/CPU \\
+mixed & 2,929 & 10.51 & 62.4 & Balanced \\
+compute\_prime & 4,170 & 8.95 & 70.8 & CPU \\ \bottomrule
+\end{tabular}
+\caption{Performance Summary at Maximum Load (40 threads)}
+\label{tab:summary}
+\end{table}
+
+\subsection{Bottleneck Analysis}
+
+Based on resource utilization monitoring, we identified the following bottlenecks:
+
+\begin{itemize}
+    \item \textbf{Connection Overhead (get\_all, get\_popular)}: Moderate CPU (42-56\%), zero disk I/O. Connection setup/teardown dominates. Mitigation: HTTP keep-alive, connection pooling.
+    
+    \item \textbf{Request Failures (put\_all)}: 90\% failure rate limits throughput to 396 req/s. Requires endpoint debugging.
+    
+    \item \textbf{CPU Saturation (compute\_prime)}: 71\% CPU utilization, highest throughput (4,170 req/s). Mitigation: Horizontal scaling.
+\end{itemize}
+
+\section{Discussion}
+
+\subsection{Key Findings}
+
+\begin{enumerate}
+    \item \textbf{Workload Diversity}: Throughput ranges from 396 req/s (put\_all with failures) to 4,170 req/s (compute\_prime), validating multi-tier architecture.
+    
+    \item \textbf{Cache Effectiveness}: Zero disk I/O for get\_popular, but throughput (3,498 req/s) similar to uncached reads (3,528 req/s) - connection overhead dominates.
+    
+    \item \textbf{Scalability}: CPU-bound workloads peak at 5 threads (4,466 req/s) then plateau. All workloads show throughput saturation beyond 5-10 threads.
+    
+    \item \textbf{Tail Latency}: P99 latencies reveal issues. get\_all: P50=0.00ms, P99=18.85ms.
+\end{enumerate}
+
+\subsection{Limitations}
+
+\begin{itemize}
+    \item Single-machine testing limits network latency evaluation
+    \item put\_all failure rate requires investigation
+    \item No failure scenario testing performed
+\end{itemize}
+
+\section{Conclusion}
+
+This project implemented a closed-loop load generator and conducted systematic performance analysis across five workload types. Key findings include:
+
+\begin{itemize}
+    \item Compute workloads achieve highest throughput (4,170 req/s) with 71\% CPU utilization
+    \item Connection overhead is primary bottleneck for KV operations, not disk or database
+    \item put\_all requires immediate debugging (90\% failure rate)
+    \item Cache provides zero disk I/O but minimal throughput improvement due to connection overhead
+\end{itemize}
+
+Future work: Implement connection pooling, fix put\_all endpoint, evaluate distributed deployments.
+
+\section{References}
+
+\begin{enumerate}
+    \item httplib: A C++ HTTP/HTTPS server and client library
+    \item MySQL 8.0 Reference Manual
+    \item "Measuring and Improving System Performance" - CS 744, IIT Bombay
+\end{enumerate}
+
+\end{document}

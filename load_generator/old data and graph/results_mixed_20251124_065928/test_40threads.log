@@ -1,0 +1,115 @@
+========================================
+  KV Store Load Generator
+========================================
+Server:    127.0.0.1:8080
+Threads:   40
+Duration:  10 seconds
+Workload:  mixed
+Timeout:   5000 ms
+========================================
+
+Starting 40 client threads...
+[Thread 1] Started
+[Thread 0] Started
+[Thread 2] Started
+[Thread 3] Started
+[Thread 4] Started
+[Thread 5] Started
+[Thread 6] Started
+[Thread 7] Started
+[Thread 10] Started
+[Thread 8] Started
+[Thread 9] Started
+[Thread 11] Started
+[Thread 12] Started
+[Thread 13] Started
+[Thread 14] Started
+[Thread 15] Started
+[Thread 17] Started
+[Thread 16] Started
+[Thread 18] Started
+[Thread 19] Started
+[Thread 20] Started
+[Thread 21] Started
+[Thread 23] Started
+[Thread 22] Started
+[Thread 25] Started
+[Thread 24] Started
+[Thread 26] Started
+[Thread 29] Started
+[Thread 27] Started
+[Thread 35] Started
+[Thread 31] Started
+[Thread 28] Started
+[Thread 37] Started
+[Thread 30] Started
+Load test running for 10 seconds...
+Press Ctrl+C to stop early
+
+[Thread 34] Started
+[Thread 32] Started
+[Thread 33] Started
+[Thread 36] Started
+[Thread 39] Started
+[Thread 38] Started
+[10s] Success: 29056 | Failed: 7282 | Throughput: 2905.60 req/s
+
+Stopping threads...
+[Thread 21] Stopped
+[Thread 17] Stopped
+[Thread 0] Stopped
+[Thread 29] Stopped
+[Thread 15] Stopped
+[Thread 7] Stopped
+[Thread 25] Stopped
+[Thread 8] Stopped
+[Thread 26] Stopped
+[Thread 33] Stopped
+[Thread 28] Stopped
+[Thread 20] Stopped
+[Thread 1] Stopped
+[Thread 39] Stopped
+[Thread 16] Stopped
+[Thread 24] Stopped
+[Thread 37] Stopped
+[Thread 3] Stopped
+[Thread 31] Stopped
+[Thread 19] Stopped
+[Thread 14] Stopped
+[Thread 5] Stopped
+[Thread 12] Stopped
+[Thread 13] Stopped
+[Thread 18] Stopped
+[Thread 38] Stopped
+[Thread 30] Stopped
+[Thread 6] Stopped
+[Thread 35] Stopped
+[Thread 36] Stopped
+[Thread 22] Stopped
+[Thread 10] Stopped
+[Thread 2] Stopped
+[Thread 32] Stopped
+[Thread 11] Stopped
+[Thread 9] Stopped
+[Thread 4] Stopped
+[Thread 27] Stopped
+[Thread 34] Stopped
+[Thread 23] Stopped
+
+========================================
+  Load Test Results
+========================================
+Actual Duration:       10.57 seconds
+Total Requests:        36379
+Successful Requests:   29088
+Failed Requests:       7291
+Success Rate:          79.96%
+
+Average Throughput:    2750.90 req/s
+Average Response Time: 10.23 ms
+
+Response Time Percentiles:
+  P50 (median):        3.62 ms
+  P95:                 14.01 ms
+  P99:                 19.07 ms
+========================================

@@ -1,0 +1,42 @@
+========================================
+  KV Store Load Generator
+========================================
+Server:    127.0.0.1:8080
+Threads:   1
+Duration:  60 seconds
+Workload:  get_popular
+Timeout:   5000 ms
+========================================
+
+Starting 1 client threads...
+Load test running for 60 seconds...
+Press Ctrl+C to stop early
+
+[Thread 0] Started
+[10s] Success: 18089 | Failed: 0 | Throughput: 1808.90 req/s
+[20s] Success: 36247 | Failed: 0 | Throughput: 1812.35 req/s
+[30s] Success: 56286 | Failed: 0 | Throughput: 1876.20 req/s
+[40s] Success: 80184 | Failed: 0 | Throughput: 2004.60 req/s
+[50s] Success: 104364 | Failed: 0 | Throughput: 2087.28 req/s
+[60s] Success: 126512 | Failed: 0 | Throughput: 2108.53 req/s
+
+Stopping threads...
+[Thread 0] Stopped
+
+========================================
+  Load Test Results
+========================================
+Actual Duration:       60.00 seconds
+Total Requests:        126513
+Successful Requests:   126513
+Failed Requests:       0
+Success Rate:          100.00%
+
+Average Throughput:    2108.51 req/s
+Average Response Time: 0.00 ms
+
+Response Time Percentiles:
+  P50 (median):        0.45 ms
+  P95:                 0.66 ms
+  P99:                 0.83 ms
+========================================

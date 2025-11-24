@@ -1,0 +1,127 @@
+======================================================================
+LOAD TEST SUMMARY
+======================================================================
+
+
+======================================================================
+LOAD LEVEL: 1 threads
+======================================================================
+
+Performance Metrics:
+  Throughput:         2006.68 req/s
+  Avg Response Time:  0.00 ms
+  P50 Response Time:  0.00 ms
+  P95 Response Time:  0.52 ms
+  P99 Response Time:  0.62 ms
+  Success Rate:       80.10%
+
+Resource Utilization:
+  Server CPU (avg):   56.05%
+  Server CPU (max):   56.10%
+  MySQL CPU (avg):    0.70%
+  MySQL CPU (max):    0.70%
+  System CPU (avg):   9.12%
+  Server Memory:      0.00 MB
+  MySQL Memory:       389.53 MB
+  Disk Read (avg):    0.00 KB/s
+  Disk Write (avg):   0.00 KB/s
+
+======================================================================
+LOAD LEVEL: 5 threads
+======================================================================
+
+Performance Metrics:
+  Throughput:         2953.53 req/s
+  Avg Response Time:  0.82 ms
+  P50 Response Time:  0.00 ms
+  P95 Response Time:  3.29 ms
+  P99 Response Time:  4.67 ms
+  Success Rate:       79.97%
+
+Resource Utilization:
+  Server CPU (avg):   57.20%
+  Server CPU (max):   57.90%
+  MySQL CPU (avg):    0.70%
+  MySQL CPU (max):    0.70%
+  System CPU (avg):   22.87%
+  Server Memory:      0.00 MB
+  MySQL Memory:       389.53 MB
+  Disk Read (avg):    0.00 KB/s
+  Disk Write (avg):   0.00 KB/s
+
+======================================================================
+LOAD LEVEL: 10 threads
+======================================================================
+
+Performance Metrics:
+  Throughput:         2935.45 req/s
+  Avg Response Time:  2.25 ms
+  P50 Response Time:  0.00 ms
+  P95 Response Time:  6.39 ms
+  P99 Response Time:  9.58 ms
+  Success Rate:       80.10%
+
+Resource Utilization:
+  Server CPU (avg):   59.00%
+  Server CPU (max):   59.70%
+  MySQL CPU (avg):    0.70%
+  MySQL CPU (max):    0.70%
+  System CPU (avg):   22.37%
+  Server Memory:      0.00 MB
+  MySQL Memory:       389.53 MB
+  Disk Read (avg):    0.00 KB/s
+  Disk Write (avg):   0.00 KB/s
+
+======================================================================
+LOAD LEVEL: 20 threads
+======================================================================
+
+Performance Metrics:
+  Throughput:         2918.64 req/s
+  Avg Response Time:  5.02 ms
+  P50 Response Time:  0.00 ms
+  P95 Response Time:  8.54 ms
+  P99 Response Time:  12.32 ms
+  Success Rate:       79.84%
+
+Resource Utilization:
+  Server CPU (avg):   60.76%
+  Server CPU (max):   61.40%
+  MySQL CPU (avg):    0.70%
+  MySQL CPU (max):    0.70%
+  System CPU (avg):   22.06%
+  Server Memory:      0.00 MB
+  MySQL Memory:       389.53 MB
+  Disk Read (avg):    0.00 KB/s
+  Disk Write (avg):   0.00 KB/s
+
+======================================================================
+LOAD LEVEL: 40 threads
+======================================================================
+
+Performance Metrics:
+  Throughput:         2928.88 req/s
+  Avg Response Time:  10.51 ms
+  P50 Response Time:  0.00 ms
+  P95 Response Time:  14.26 ms
+  P99 Response Time:  18.69 ms
+  Success Rate:       80.02%
+
+Resource Utilization:
+  Server CPU (avg):   62.41%
+  Server CPU (max):   63.10%
+  MySQL CPU (avg):    0.70%
+  MySQL CPU (max):    0.70%
+  System CPU (avg):   21.94%
+  Server Memory:      0.00 MB
+  MySQL Memory:       389.53 MB
+  Disk Read (avg):    0.00 KB/s
+  Disk Write (avg):   0.00 KB/s
+
+======================================================================
+BOTTLENECK ANALYSIS
+======================================================================
+
+✓ No clear bottlenecks detected (all resources <80% utilization)
+
+======================================================================
